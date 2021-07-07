@@ -1,0 +1,25 @@
+{
+  "name": "blogilista_backend",
+  "version": "1.0.0",
+  "description": "blogilista for part 4",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "blogilista",
+    "osa4"
+  ],
+  "author": "Jussi Niemi",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.9"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.13.2"
+  }
+}
