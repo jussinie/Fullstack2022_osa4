@@ -21,7 +21,7 @@ const initialBlogs = [
   {
     title: 'test blog 3',
     author: 'Without 0',
-    //url: 'zerosareneeded.com',
+    url: 'zerosareneeded.com',
   }
 ]
 
@@ -104,6 +104,23 @@ test('a valid blog can be added', async () => {
   expect(contents).toContain(
     'with post added test blog 1'
   )
+})
+
+test('blog without title or url cannot be added', async () => {
+  const newBlog = {
+    author: 'Jussi',
+    url: 'sample.com/postblog',
+    likes: 0
+  }
+
+  await api
+    .post('/api/blogs/')
+    .send(newBlog)
+    .expect(400)
+
+  const response = await api.get('/api/blogs')
+
+  expect(response.body).toHaveLength(initialBlogs.length)
 })
 
 test('an individual blog can be updated', async () => {
