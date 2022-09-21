@@ -17,6 +17,11 @@ const initialBlogs = [
     author: 'Sepi',
     url: 'example.com/blog',
     likes: 0
+  },
+  {
+    title: 'test blog 3',
+    author: 'Without 0',
+    //url: 'zerosareneeded.com',
   }
 ]
 
@@ -25,6 +30,8 @@ beforeEach(async () => {
   let blogObject = new Blog(initialBlogs[0])
   await blogObject.save()
   blogObject = new Blog(initialBlogs[1])
+  await blogObject.save()
+  blogObject = new Blog(initialBlogs[2])
   await blogObject.save()
 })
 
@@ -40,6 +47,13 @@ test('blog id field is named id', async () => {
   const blogToEvaluate = blogsAtStart[0]
   //helper function already converts id field to JSON
   expect(blogToEvaluate.id).toBeDefined()
+})
+
+test('if like is empty, it is set to 0', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  console.log(blogsAtStart)
+  const blogToEvaluate = blogsAtStart[2]
+  expect(blogToEvaluate.likes).toBe(0)
 })
 
 test('all blogs are returned', async () => {
