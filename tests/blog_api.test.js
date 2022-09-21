@@ -35,6 +35,13 @@ test('blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
+test('blog id field is named id', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToEvaluate = blogsAtStart[0]
+  //helper function already converts id field to JSON
+  expect(blogToEvaluate.id).toBeDefined()
+})
+
 test('all blogs are returned', async () => {
   const response = await api.get('/api/blogs')
 
@@ -83,6 +90,25 @@ test('a valid blog can be added', async () => {
   expect(contents).toContain(
     'with post added test blog 1'
   )
+})
+
+test('an individual blog can be updated', async () => {
+
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+  blogToUpdate.likes = blogToUpdate.likes + 1
+
+  await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(blogToUpdate)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(initialBlogs.length)
+
+  const likes = blogsAtEnd.map(b => b.likes)
+  expect(likes).toContain(1)
 })
 
 afterAll(() => {
