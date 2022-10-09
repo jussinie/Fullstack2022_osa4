@@ -47,11 +47,56 @@ const mostBlogs = (blogList) => {
   return newAnswer
 }
 
+const mostLikes = (blogs) => {
+
+  const counts = {}
+
+  for (const blog of blogs) {
+    counts[blog.author] = counts[blog.author] ? counts[blog.author] + 1 : 1
+  }
+
+  let oneOccurences = []
+
+  for (const [key, value] of Object.entries(counts)) {
+    if (value === 1) {
+      oneOccurences.push({ key: key, value: value })
+    }
+  }
+
+  let resultarr = []
+  oneOccurences.forEach(author => {
+    const added = _.find(blogs, ['author', author.key])
+    resultarr.push({ author: added.author, likes: added.likes })
+  })
+
+  function comparator(a, b) {
+    return b.likes - a.likes
+  }
+
+  blogs.forEach(d => {
+    blogs.forEach(d2 => {
+      if(d2.author === d.author && d.title !== d2.title){
+        let result = { author: d.author, likes: d.likes + d2.likes }
+        const existing = _.find(resultarr, ['author'], result.author)
+        if (existing !== undefined ) {
+          if(!(resultarr.some(item => item.author === result.author && existing.likes > result.likes))) {
+            resultarr.push(result)
+          }
+        } else if(!(resultarr.some(item => item.author === result.author))){
+          resultarr.push(result)
+        }
+      }
+    })
+  })
+  const mostLikes = resultarr.sort(comparator)[0]
+  return mostLikes
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
 }
 
 module.exports = {
-  dummy, totalLikes, favoriteBlog, blogsInDb, mostBlogs
+  dummy, totalLikes, favoriteBlog, blogsInDb, mostBlogs, mostLikes
 }
