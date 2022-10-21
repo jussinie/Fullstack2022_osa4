@@ -19,6 +19,12 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs.map(blog => blog.toJSON()))
 })
 
+blogsRouter.get('/:id', async (request, response) => {
+  const blog = await Blog
+    .findById(request.params.id).populate('user')
+  response.json(blog.toJSON())
+})
+
 blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const body = request.body
   //const token = getTokenFrom(request)
@@ -71,7 +77,6 @@ blogsRouter.put('/:id', async (request, response) => {
   } catch (exception) {
     console.log('exception ', exception)
   }
-
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
@@ -94,5 +99,22 @@ blogsRouter.delete('/:id', async (request, response) => {
   return response.status(400).json({ error: 'only person who added the blog can delete it' })
 
 })
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const body = request.body
+  const blogToBeUpdated = await Blog.findById(request.params.id)
+  let commentsToUpdate = blogToBeUpdated.comments
+  commentsToUpdate.push(body.comment)
+
+  const blogWithComments = { ...blogToBeUpdated, comments: commentsToUpdate }
+
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blogWithComments, { new: true })
+    response.status(201).json(updatedBlog.toJSON())
+  } catch (exception) {
+    console.log('exception ', exception)
+  }
+})
+
 
 module.exports = blogsRouter

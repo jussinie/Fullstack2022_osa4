@@ -6,7 +6,14 @@ const supertest = require("supertest");
 const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
+const User = require("../models/user")
 const helper = require("../utils/test_helper");
+
+const testUser = {
+  "username": "tester",
+  "name": "test person",
+  "password": "tester"
+}
 
 const initialBlogs = [
   {
@@ -30,6 +37,9 @@ const initialBlogs = [
 
 beforeEach(async () => {
   await Blog.deleteMany({});
+  await User.deleteMany({});
+  let userObject = new User(testUser);
+  await userObject.save();
   let blogObject = new Blog(initialBlogs[0]);
   await blogObject.save();
   blogObject = new Blog(initialBlogs[1]);
@@ -67,6 +77,8 @@ test("all blogs are returned", async () => {
 
 test("individual blog can be deleted", async () => {
   const blogsAtStart = await helper.blogsInDb();
+  const user = await User.findOne({ username: 'tester' })
+  console.log('user', user)
   console.log("blogsAtStart", blogsAtStart);
   const blogToDelete = blogsAtStart[0];
 

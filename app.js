@@ -43,10 +43,18 @@ const userExtractor = async (request, response, next) => {
 
 app.use(cors())
 app.use(express.json())
+console.log('querying')
 app.use(middleware.tokenExtractor)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
+
+console.log(`We run in ${process.env.NODE_ENV} mode`)
+
+if (process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controllers/router')
+  app.use('/api/testing', testingRouter)
+}
 
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message)
